@@ -152,7 +152,7 @@ def _build_where(
     payout_currency=None, payout_frequency=None,
     min_domain_age_years=None, max_domain_age_years=None, whois_state=None,
     traffic_state=None, min_launch_year=None, max_launch_year=None,
-    sub_category=None, field=None, domain_age_ranges=None,
+    sub_category=None, field=None, review_status=None, domain_age_ranges=None,
 ):
     conds = []
     if min_launch_year is not None:
@@ -222,6 +222,9 @@ def _build_where(
         fields = [f for f in fields if f]
         if fields:
             conds.append(AffiliateProgram.field.in_(fields))
+    if review_status:
+        # Tình trạng đánh giá (Đạt / Bỏ / Theo dõi thêm) — chọn 1 giá trị.
+        conds.append(AffiliateProgram.review_status == review_status)
     if search:
         like = f"%{search.lower()}%"
         conds.append(func.lower(AffiliateProgram.name).like(like))
@@ -333,6 +336,7 @@ async def list_programs(
     max_launch_year: Optional[int] = None,
     sub_category: Optional[str] = None,
     field: Optional[str] = None,
+    review_status: Optional[str] = None,
     domain_age_ranges: Optional[List[str]] = None,
     duration_ranges: Optional[List[str]] = None,
     dedupe_domain: bool = False,
@@ -352,7 +356,7 @@ async def list_programs(
         max_domain_age_years=max_domain_age_years, whois_state=whois_state,
         traffic_state=traffic_state,
         min_launch_year=min_launch_year, max_launch_year=max_launch_year,
-        sub_category=sub_category, field=field, domain_age_ranges=domain_age_ranges,
+        sub_category=sub_category, field=field, review_status=review_status, domain_age_ranges=domain_age_ranges,
     )
     col = _SORTABLE.get(sort_by, AffiliateProgram.crawled_at)
     direction = asc if order == "asc" else desc
@@ -416,6 +420,7 @@ async def all_programs(
     traffic_state: Optional[str] = None,
     sub_category: Optional[str] = None,
     field: Optional[str] = None,
+    review_status: Optional[str] = None,
     domain_age_ranges: Optional[List[str]] = None,
     duration_ranges: Optional[List[str]] = None,
 ) -> List[AffiliateProgram]:
@@ -425,7 +430,7 @@ async def all_programs(
         directory_status=directory_status,
         networks=networks, approval=approval, registrations_open=registrations_open,
         payout_currency=payout_currency, payout_frequency=payout_frequency,
-        traffic_state=traffic_state, sub_category=sub_category, field=field, domain_age_ranges=domain_age_ranges,
+        traffic_state=traffic_state, sub_category=sub_category, field=field, review_status=review_status, domain_age_ranges=domain_age_ranges,
     )
     q = select(AffiliateProgram).order_by(AffiliateProgram.crawled_at.desc())
     if where is not None:
@@ -463,6 +468,7 @@ async def list_program_ids(
     max_launch_year: Optional[int] = None,
     sub_category: Optional[str] = None,
     field: Optional[str] = None,
+    review_status: Optional[str] = None,
     domain_age_ranges: Optional[List[str]] = None,
     duration_ranges: Optional[List[str]] = None,
     dedupe_domain: bool = False,
@@ -482,7 +488,7 @@ async def list_program_ids(
         networks=networks, approval=approval, registrations_open=registrations_open,
         payout_currency=payout_currency, payout_frequency=payout_frequency,
         min_launch_year=min_launch_year, max_launch_year=max_launch_year,
-        sub_category=sub_category, field=field, domain_age_ranges=domain_age_ranges,
+        sub_category=sub_category, field=field, review_status=review_status, domain_age_ranges=domain_age_ranges,
     )
     col = _SORTABLE.get(sort_by, AffiliateProgram.crawled_at)
     direction = asc if order == "asc" else desc

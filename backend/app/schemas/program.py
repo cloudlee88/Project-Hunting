@@ -13,6 +13,8 @@ class ProgramOut(BaseModel):
     category: Optional[str] = None
     sub_category: Optional[str] = None
     field: Optional[str] = None
+    note: Optional[str] = None
+    review_status: Optional[str] = None
     commission: Optional[str] = None
     commission_value: Optional[float] = None
     commission_type: Optional[str] = None

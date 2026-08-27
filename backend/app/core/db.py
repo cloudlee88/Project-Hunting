@@ -104,6 +104,8 @@ async def init_db() -> None:
         await _ensure_column(conn, "discovery_candidates", "field", "VARCHAR(128)")
         await _ensure_column(conn, "discovery_sources", "field", "VARCHAR(128)")
         await _ensure_column(conn, "affiliate_programs", "field", "VARCHAR(128)")
+        await _ensure_column(conn, "affiliate_programs", "note", "TEXT")
+        await _ensure_column(conn, "affiliate_programs", "review_status", "VARCHAR(32)")
         # WHOIS (RDAP) — ngày tạo/hết hạn domain cho màn Chương trình
         await _ensure_column(conn, "affiliate_programs", "domain_created_at", "DATETIME")
         await _ensure_column(conn, "affiliate_programs", "domain_expires_at", "DATETIME")

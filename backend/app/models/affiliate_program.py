@@ -18,6 +18,8 @@ class AffiliateProgram(Base):
     category: Mapped[Optional[str]] = mapped_column(String(128), index=True)  # nhóm rộng: 5 fixed (Forex/Crypto/SP số/…) ← source.category
     sub_category: Mapped[Optional[str]] = mapped_column(String(128), index=True)  # ngách hẹp (danh sách dài) ← source.name (Tên gợi nhớ)
     field: Mapped[Optional[str]] = mapped_column(String(128), index=True)  # lĩnh vực hoạt động (CRM, Accounting, HR…) ← nguồn hoặc CSV
+    note: Mapped[Optional[str]] = mapped_column(Text)  # ghi chú cá nhân (user sửa inline ở màn Chương trình, lưu lại)
+    review_status: Mapped[Optional[str]] = mapped_column(String(32), index=True)  # tình trạng đánh giá: Đạt / Bỏ / Theo dõi thêm
     commission: Mapped[Optional[str]] = mapped_column(String(128))
     commission_value: Mapped[Optional[float]] = mapped_column(Float, index=True)
     commission_type: Mapped[Optional[str]] = mapped_column(String(32))

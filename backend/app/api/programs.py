@@ -55,6 +55,7 @@ async def list_programs(
     category: Optional[str] = None,
     sub_category: Optional[List[str]] = Query(None),
     field: Optional[List[str]] = Query(None),
+    review_status: Optional[str] = Query(None),
     search: Optional[str] = None,
     min_commission: Optional[float] = None,
     max_commission: Optional[float] = None,
@@ -86,7 +87,7 @@ async def list_programs(
     session: AsyncSession = Depends(get_session),
 ):
     items, total = await program_service.list_programs(
-        session, source=source, category=category, sub_category=sub_category, field=field, search=search,
+        session, source=source, category=category, sub_category=sub_category, field=field, review_status=review_status, search=search,
         min_commission=min_commission, max_commission=max_commission,
         min_traffic=min_traffic, min_cookie_days=min_cookie_days,
         has_traffic=has_traffic, has_signup=has_signup,
@@ -164,6 +165,7 @@ async def list_program_ids(
     category: Optional[str] = None,
     sub_category: Optional[List[str]] = Query(None),
     field: Optional[List[str]] = Query(None),
+    review_status: Optional[str] = Query(None),
     search: Optional[str] = None,
     min_commission: Optional[float] = None,
     max_commission: Optional[float] = None,
@@ -190,7 +192,7 @@ async def list_program_ids(
 ):
     """Trả về id của toàn bộ program khớp filter — dùng cho 'Chọn tất cả' FE."""
     return await program_service.list_program_ids(
-        session, source=source, category=category, sub_category=sub_category, field=field, search=search,
+        session, source=source, category=category, sub_category=sub_category, field=field, review_status=review_status, search=search,
         min_commission=min_commission, max_commission=max_commission,
         min_traffic=min_traffic, min_cookie_days=min_cookie_days,
         has_traffic=has_traffic, has_signup=has_signup,
@@ -235,6 +237,7 @@ async def export_csv(
     category: Optional[str] = None,
     sub_category: Optional[List[str]] = Query(None),
     field: Optional[List[str]] = Query(None),
+    review_status: Optional[str] = Query(None),
     search: Optional[str] = None,
     min_commission: Optional[float] = None,
     max_commission: Optional[float] = None,
@@ -256,7 +259,7 @@ async def export_csv(
         except ValueError:
             raise HTTPException(400, "ids phải là danh sách số")
     rows = await program_service.all_programs(
-        session, source=source, category=category, sub_category=sub_category, field=field, search=search,
+        session, source=source, category=category, sub_category=sub_category, field=field, review_status=review_status, search=search,
         min_commission=min_commission, max_commission=max_commission,
         min_traffic=min_traffic, min_cookie_days=min_cookie_days,
         domain_age_ranges=domain_age_ranges, duration_ranges=duration_ranges,
@@ -267,7 +270,7 @@ async def export_csv(
     buf = io.StringIO()
     writer = csv.writer(buf)
     writer.writerow([
-        "id", "source", "external_id", "name", "category", "sub_category", "field",
+        "id", "source", "external_id", "name", "category", "sub_category", "field", "note", "review_status",
         "commission", "commission_value", "commission_type",
         "payout", "payment_methods", "cookie_duration",
         "traffic_score", "traffic_period", "pages_per_visit", "avg_visit_duration_sec",
@@ -284,7 +287,7 @@ async def export_csv(
             _pm = ""
         _tf = _traffic_flat(p.traffic_details_json)
         writer.writerow([
-            p.id, p.source, p.external_id, p.name, p.category or "", p.sub_category or "", p.field or "",
+            p.id, p.source, p.external_id, p.name, p.category or "", p.sub_category or "", p.field or "", p.note or "", p.review_status or "",
             p.commission or "", p.commission_value or "", p.commission_type or "",
             p.payout or "", _pm, p.cookie_duration or "",
             int(p.traffic_score) if p.traffic_score else "",
@@ -398,6 +401,52 @@ async def update_sms_preset(
     p.sms_country_id = body.sms_country_id or None
     p.sms_service_id = body.sms_service_id or None
     p.sms_profile_id = body.sms_profile_id or None
+    await session.commit()
+    await session.refresh(p)
+    return p
+
+
+class NoteIn(BaseModel):
+    note: str = ""
+
+
+@router.patch("/{program_id}/note", response_model=ProgramOut)
+async def update_note(
+    program_id: int,
+    body: NoteIn,
+    session: AsyncSession = Depends(get_session),
+):
+    """Lưu ghi chú cá nhân cho program (user sửa inline ở màn Chương trình)."""
+    p = await program_service.get_program(program_id, session)
+    if not p:
+        raise HTTPException(404, "Không tìm thấy program")
+    p.note = (body.note or "").strip() or None
+    await session.commit()
+    await session.refresh(p)
+    return p
+
+
+_REVIEW_STATUSES = {"Đạt", "Bỏ", "Theo dõi thêm"}
+
+
+class ReviewStatusIn(BaseModel):
+    review_status: str = ""
+
+
+@router.patch("/{program_id}/review-status", response_model=ProgramOut)
+async def update_review_status(
+    program_id: int,
+    body: ReviewStatusIn,
+    session: AsyncSession = Depends(get_session),
+):
+    """Lưu tình trạng đánh giá của program: Đạt / Bỏ / Theo dõi thêm (rỗng = chưa đánh giá)."""
+    p = await program_service.get_program(program_id, session)
+    if not p:
+        raise HTTPException(404, "Không tìm thấy program")
+    v = (body.review_status or "").strip()
+    if v and v not in _REVIEW_STATUSES:
+        raise HTTPException(400, "Tình trạng không hợp lệ")
+    p.review_status = v or None
     await session.commit()
     await session.refresh(p)
     return p

@@ -190,6 +190,7 @@ export default function ProgramsPage() {
   const [category, setCategory] = useState("");        // nhóm rộng (5 fixed)
   const [subCategories, setSubCategories] = useState<string[]>([]);   // ngách hẹp (chọn nhiều)
   const [fields, setFields] = useState<string[]>([]);   // lĩnh vực (CRM/Accounting/HR…) — chọn nhiều
+  const [reviewStatus, setReviewStatus] = useState("");  // tình trạng đánh giá: Đạt / Bỏ / Theo dõi thêm
   const [platform, setPlatform] = useState("");
   const [search, setSearch] = useState("");
   const [minComm, setMinComm] = useState("");
@@ -334,6 +335,7 @@ export default function ProgramsPage() {
     category: category || undefined,
     sub_category: subCategories.length ? subCategories : undefined,
     field: fields.length ? fields : undefined,
+    review_status: reviewStatus || undefined,
     search: search || undefined,
     min_commission: minComm ? Number(minComm) : undefined,
     max_commission: maxComm ? Number(maxComm) : undefined,
@@ -353,7 +355,7 @@ export default function ProgramsPage() {
     payout_currency: payoutCurrency || undefined,
     payout_frequency: payoutFrequency || undefined,
     dedupe_domain: dedupeDomain || undefined,
-  }), [source, category, subCategories, fields, platform, search, minComm, maxComm, minTraffic, ageBuckets, durationBuckets, whoisState, minLaunchYear, maxLaunchYear, minCookieDays, dedupeDomain, trafficState, hasSignup, directoryStatus, networks, approval, registrationsOpen, payoutCurrency, payoutFrequency]);
+  }), [source, category, subCategories, fields, reviewStatus, platform, search, minComm, maxComm, minTraffic, ageBuckets, durationBuckets, whoisState, minLaunchYear, maxLaunchYear, minCookieDays, dedupeDomain, trafficState, hasSignup, directoryStatus, networks, approval, registrationsOpen, payoutCurrency, payoutFrequency]);
 
   const q = useQuery({
     queryKey: ["programs", filterPayload, page, pageSize, sortBy, order],
@@ -592,6 +594,7 @@ export default function ProgramsPage() {
       category: category || undefined,
       sub_category: subCategories.length ? subCategories : undefined,
       field: fields.length ? fields : undefined,
+      review_status: reviewStatus || undefined,
       search: search || undefined,
       min_commission: minComm ? Number(minComm) : undefined,
       max_commission: maxComm ? Number(maxComm) : undefined,
@@ -602,12 +605,12 @@ export default function ProgramsPage() {
       networks: platform ? [platform] : undefined,
       domain_age_ranges: ageBuckets.length ? ageBuckets.map((l) => DOMAIN_AGE_SPEC[l]).filter(Boolean) : undefined,
       duration_ranges: durationBuckets.length ? durationBuckets.map((l) => DURATION_SPEC[l]).filter(Boolean) : undefined,
-    }), [source, category, subCategories, fields, platform, search, minComm, maxComm, minTraffic, minCookieDays, trafficState, hasSignup, ageBuckets, durationBuckets]);
+    }), [source, category, subCategories, fields, reviewStatus, platform, search, minComm, maxComm, minTraffic, minCookieDays, trafficState, hasSignup, ageBuckets, durationBuckets]);
 
   const exportSelectedUrl = api.exportProgramsCsvUrl({ ids: Array.from(selected) });
 
   const resetFilters = () => {
-    setSource(""); setCategory(""); setSubCategories([]); setFields([]); setPlatform(""); setSearch("");
+    setSource(""); setCategory(""); setSubCategories([]); setFields([]); setReviewStatus(""); setPlatform(""); setSearch("");
     setMinComm(""); setMaxComm(""); setMinTraffic(""); setAgeBuckets([]); setDurationBuckets([]); setWhoisState(""); setMinLaunchYear(""); setMaxLaunchYear(""); setMinCookieDays("");
     setTrafficState(""); setHasSignup(""); setDirectoryStatus("");
     setNetworks([]); setApproval(""); setRegistrationsOpen("");
@@ -615,7 +618,7 @@ export default function ProgramsPage() {
     setPage(1); setSortBy("crawled_at"); setOrder("desc");
   };
   const activeFilterCount =
-    (source ? 1 : 0) + (category ? 1 : 0) + (subCategories.length ? 1 : 0) + (fields.length ? 1 : 0) + (platform ? 1 : 0) + (search ? 1 : 0) +
+    (source ? 1 : 0) + (category ? 1 : 0) + (subCategories.length ? 1 : 0) + (fields.length ? 1 : 0) + (reviewStatus ? 1 : 0) + (platform ? 1 : 0) + (search ? 1 : 0) +
     (minComm ? 1 : 0) + (maxComm ? 1 : 0) +
     (minTraffic ? 1 : 0) + (ageBuckets.length ? 1 : 0) + (durationBuckets.length ? 1 : 0) + (whoisState ? 1 : 0) + (minLaunchYear ? 1 : 0) + (maxLaunchYear ? 1 : 0) + (minCookieDays ? 1 : 0) +
     (trafficState ? 1 : 0) + (hasSignup ? 1 : 0) +
@@ -742,6 +745,13 @@ export default function ProgramsPage() {
                 searchPlaceholder="Tìm lĩnh vực..."
                 disabled={!fieldOptions.length}
               />
+            </div>
+            <div>
+              <label className="block text-xs font-medium text-gray-600 mb-1.5">Tình trạng</label>
+              <Select value={reviewStatus} onChange={(e) => { setReviewStatus(e.target.value); setPage(1); }} aria-label="Lọc theo tình trạng đánh giá">
+                <option value="">Tất cả tình trạng</option>
+                {REVIEW_STATUSES.map((s) => <option key={s} value={s}>{s}</option>)}
+              </Select>
             </div>
             <div>
               <label className="block text-xs font-medium text-gray-600 mb-1.5">Nền tảng</label>
@@ -1095,6 +1105,8 @@ export default function ProgramsPage() {
                     />
                   </th>
                   <SortableTh label="Tên" k="name" current={sortBy} onSort={onHeaderSort} icon={sortIcon("name")} />
+                  <th className="px-3 py-3 text-left whitespace-nowrap">Tình trạng</th>
+                  <th className="px-3 py-3 text-left whitespace-nowrap">Ghi chú</th>
                   <SortableTh label="Nguồn" k="source" current={sortBy} onSort={onHeaderSort} icon={sortIcon("source")} />
                   <SortableTh label="Category" k="category" current={sortBy} onSort={onHeaderSort} icon={sortIcon("category")} />
                   <SortableTh label="Commission" k="commission_value" current={sortBy} onSort={onHeaderSort} icon={sortIcon("commission_value")} />
@@ -1161,6 +1173,8 @@ export default function ProgramsPage() {
                         </div>
                       </div>
                     </td>
+                    <StatusCell programId={p.id} initial={p.review_status} />
+                    <NoteCell programId={p.id} initialNote={p.note} />
                     <td className="px-4 py-3">
                       <Badge variant={SOURCE_COLORS[p.source] || "neutral"}>{p.source}</Badge>
                     </td>
@@ -1755,6 +1769,73 @@ export default function ProgramsPage() {
 
       {/* Floating badge cũ đã được thay bằng <TrafficJobIndicator /> trên top-bar (xem (app)/layout.tsx) */}
     </div>
+  );
+}
+
+// Tình trạng đánh giá dự án — 3 phương án, chọn là lưu ngay vào DB (đọc lại được sau).
+const REVIEW_STATUSES = ["Đạt", "Bỏ", "Theo dõi thêm"];
+const REVIEW_STATUS_STYLE: Record<string, string> = {
+  "Đạt": "bg-emerald-50 text-emerald-700 border-emerald-300",
+  "Bỏ": "bg-red-50 text-red-600 border-red-300",
+  "Theo dõi thêm": "bg-amber-50 text-amber-700 border-amber-300",
+};
+function StatusCell({ programId, initial }: { programId: number; initial?: string | null }) {
+  const [val, setVal] = useState(initial || "");
+  const onChange = async (v: string) => {
+    const prev = val;
+    setVal(v);
+    try { await api.updateProgramReviewStatus(programId, v); }
+    catch { setVal(prev); }   // lỗi → trả lại giá trị cũ
+  };
+  return (
+    <td className="px-3 py-3">
+      <select
+        value={val}
+        onChange={(e) => onChange(e.target.value)}
+        aria-label="Tình trạng đánh giá"
+        className={`text-xs rounded-md border px-2 py-1.5 cursor-pointer focus:outline-none focus:ring-2 focus:ring-primary/30 ${val ? REVIEW_STATUS_STYLE[val] : "border-gray-200 text-gray-400 bg-white"}`}
+      >
+        <option value="">—</option>
+        {REVIEW_STATUSES.map((s) => <option key={s} value={s}>{s}</option>)}
+      </select>
+    </td>
+  );
+}
+
+// Ô ghi chú sửa inline: gõ trực tiếp, tự lưu khi rời ô (blur). Lưu vào DB → mở lại đọc được.
+function NoteCell({ programId, initialNote }: { programId: number; initialNote?: string | null }) {
+  const [val, setVal] = useState(initialNote || "");
+  const [saved, setSaved] = useState(initialNote || "");
+  const [status, setStatus] = useState<"idle" | "saving" | "saved">("idle");
+  const save = async () => {
+    const v = val.trim();
+    if (v === saved) { setStatus("idle"); return; }
+    setStatus("saving");
+    try {
+      await api.updateProgramNote(programId, v);
+      setSaved(v);
+      setStatus("saved");
+      setTimeout(() => setStatus("idle"), 1500);
+    } catch {
+      setStatus("idle");
+    }
+  };
+  return (
+    <td className="px-3 py-3 align-top">
+      <textarea
+        value={val}
+        onChange={(e) => setVal(e.target.value)}
+        onBlur={save}
+        rows={2}
+        placeholder="Ghi chú…"
+        aria-label="Ghi chú dự án"
+        className="w-44 text-xs text-gray-700 border border-gray-200 rounded-md px-2 py-1 resize-y bg-white focus:outline-none focus:ring-2 focus:ring-primary/30"
+      />
+      <div className="h-3 mt-0.5 text-[10px] leading-3">
+        {status === "saving" && <span className="text-gray-400">đang lưu…</span>}
+        {status === "saved" && <span className="text-emerald-600">đã lưu ✓</span>}
+      </div>
+    </td>
   );
 }
 

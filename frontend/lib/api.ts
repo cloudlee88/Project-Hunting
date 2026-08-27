@@ -86,7 +86,7 @@ export const getJob = (id: number) => req<Job>(`/jobs/${id}`);
 export type Program = {
   id: number; source: string; external_id: string; name: string;
   url: string | null; signup_url: string | null;
-  category: string | null; sub_category?: string | null; field?: string | null; commission: string | null;
+  category: string | null; sub_category?: string | null; field?: string | null; note?: string | null; review_status?: string | null; commission: string | null;
   commission_value: number | null; commission_type: string | null;
   payout: string | null; cookie_duration: string | null;
   description: string | null; tags_json: string | null;
@@ -172,6 +172,7 @@ export type ProgramFilter = {
   category?: string;
   sub_category?: string[];
   field?: string[];
+  review_status?: string;
   search?: string;
   min_commission?: number;
   max_commission?: number;
@@ -211,6 +212,10 @@ export const listPrograms = (q: ProgramFilter & { page?: number; page_size?: num
 export const getProgram = (id: number) => req<Program>(`/programs/${id}`);
 export const updateProgramSmsPreset = (id: number, body: { sms_country_id?: string; sms_service_id?: string; sms_profile_id?: string }) =>
   req<Program>(`/programs/${id}/sms-preset`, { method: "PATCH", body: JSON.stringify(body) });
+export const updateProgramNote = (id: number, note: string) =>
+  req<Program>(`/programs/${id}/note`, { method: "PATCH", body: JSON.stringify({ note }) });
+export const updateProgramReviewStatus = (id: number, review_status: string) =>
+  req<Program>(`/programs/${id}/review-status`, { method: "PATCH", body: JSON.stringify({ review_status }) });
 export type SmsOption = { id: string; name: string };
 export const listSmsCountries = () => req<SmsOption[]>(`/sms/countries`);
 export const listSmsServices = () => req<SmsOption[]>(`/sms/services`);
@@ -244,7 +249,7 @@ export const listProgramFields = (source?: string) => {
   const qs = source ? `?source=${encodeURIComponent(source)}` : "";
   return req<string[]>(`/programs/fields${qs}`);
 };
-export const exportProgramsCsvUrl = (q: { source?: string; category?: string; sub_category?: string[]; field?: string[]; search?: string; min_commission?: number; max_commission?: number; min_traffic?: number; min_cookie_days?: number; has_traffic?: boolean; traffic_state?: string; has_signup?: boolean; networks?: string[]; domain_age_ranges?: string[]; duration_ranges?: string[]; ids?: number[] } = {}) => {
+export const exportProgramsCsvUrl = (q: { source?: string; category?: string; sub_category?: string[]; field?: string[]; review_status?: string; search?: string; min_commission?: number; max_commission?: number; min_traffic?: number; min_cookie_days?: number; has_traffic?: boolean; traffic_state?: string; has_signup?: boolean; networks?: string[]; domain_age_ranges?: string[]; duration_ranges?: string[]; ids?: number[] } = {}) => {
   const params = new URLSearchParams();
   Object.entries(q).forEach(([k, v]) => {
     if (v === undefined || v === "" || v === null) return;
