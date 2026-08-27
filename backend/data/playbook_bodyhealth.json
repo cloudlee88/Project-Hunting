@@ -1,0 +1,77 @@
+{
+  "program_id": 1110,
+  "name": "BodyHealth - Everflow",
+  "platform": "everflow",
+  "category": "Health & Wellness",
+  "signup_url": "https://bodyhealth.everflowclient.io/affiliate/signup",
+  "source": "manual",
+  "steps": [
+    {"action": "navigate", "url": "{{signup_url}}"},
+    {"action": "wait", "ms": 3000},
+
+    {"action": "fill", "selector": "xpath=//label[normalize-space(.)='First Name']/following::input[1]", "value": "{{profile.first_name}}"},
+    {"action": "fill", "selector": "xpath=//label[normalize-space(.)='Last Name']/following::input[1]", "value": "{{profile.last_name}}"},
+    {"action": "fill", "selector": "xpath=//label[normalize-space(.)='Email']/following::input[1]", "value": "{{profile.email}}"},
+    {"action": "fill", "selector": "xpath=//label[normalize-space(.)='Email Confirmation']/following::input[1]", "value": "{{profile.email}}"},
+    {"action": "fill", "selector": "xpath=//label[normalize-space(.)='Phone']/following::input[1]", "value": "{{profile.phone}}", "optional": true},
+
+    {"action": "click", "selector": "xpath=//label[contains(normalize-space(.),'Timezone')]/following::ef-select[1]"},
+    {"action": "wait", "ms": 800},
+    {"action": "fill", "selector": "ef-text-field input", "value": "Bangkok"},
+    {"action": "wait", "ms": 600},
+    {"action": "click", "selector": "xpath=//ef-list-item[contains(.,'Bangkok')]"},
+
+    {"action": "click", "selector": "xpath=//label[contains(normalize-space(.),'Currency')]/following::ef-select[1]"},
+    {"action": "wait", "ms": 600},
+    {"action": "click", "selector": "xpath=//ef-list-item[contains(.,'US Dollar') or contains(.,'USD')]"},
+
+    {"action": "fill", "selector": "xpath=//label[contains(normalize-space(.),'Company')][not(contains(.,'Legal'))]/following::input[1]", "value": "{{profile.first_name}}", "optional": true},
+    {"action": "fill", "selector": "xpath=//label[contains(normalize-space(.),'Website')][not(contains(.,'Social'))]/following::input[1]", "value": "{{profile.website}}", "optional": true},
+
+    {"action": "click", "selector": "xpath=//label[contains(normalize-space(.),'Legal Entity')]/following::ef-select[1]"},
+    {"action": "wait", "ms": 600},
+    {"action": "click", "selector": "xpath=//ef-list-item[contains(.,'Individual')]"},
+
+    {"action": "fill", "selector": "xpath=//label[normalize-space(.)='Address 1' or normalize-space(.)='Address']/following::input[1]", "value": "123 Nguyen Trai"},
+
+    {"action": "click", "selector": "xpath=//label[normalize-space(.)='Country']/following::ef-select[1]"},
+    {"action": "wait", "ms": 800},
+    {"action": "fill", "selector": "ef-text-field input", "value": "Vietnam"},
+    {"action": "wait", "ms": 600},
+    {"action": "click", "selector": "xpath=//ef-list-item[contains(.,'Vietnam')]"},
+
+    {"action": "fill", "selector": "xpath=//label[normalize-space(.)='City']/following::input[1]", "value": "Ho Chi Minh"},
+    {"action": "fill", "selector": "xpath=//label[contains(normalize-space(.),'Zip') or contains(normalize-space(.),'Postal')]/following::input[1]", "value": "70000", "optional": true},
+
+    {"action": "click", "selector": "xpath=//label[contains(normalize-space(.),'Payment Method')]/following::ef-select[1]"},
+    {"action": "wait", "ms": 600},
+    {"action": "click", "selector": "xpath=//ef-list-item[contains(.,'None')]"},
+
+    {"action": "click", "selector": "xpath=//label[contains(normalize-space(.),'Promotional Method')]/following::ef-select[1]"},
+    {"action": "wait", "ms": 600},
+    {"action": "click", "selector": "xpath=//ef-list-item[contains(.,'Content')]"},
+
+    {"action": "click", "selector": "xpath=//label[normalize-space(.)='Countries']/following::ef-multiselect[1]"},
+    {"action": "wait", "ms": 800},
+    {"action": "fill", "selector": "ef-text-field input", "value": "Vietnam"},
+    {"action": "wait", "ms": 600},
+    {"action": "click", "selector": "xpath=//ef-list-item[contains(.,'Vietnam')]"},
+    {"action": "key", "key": "Escape"},
+
+    {"action": "click", "selector": "xpath=//label[contains(normalize-space(.),'Property Type')]/following::ef-select[1]"},
+    {"action": "wait", "ms": 600},
+    {"action": "click", "selector": "xpath=//ef-list-item[contains(.,'Website')]"},
+
+    {"action": "fill", "selector": "xpath=//label[contains(normalize-space(.),'Url') or contains(normalize-space(.),'URL')]/following::input[1]", "value": "{{profile.website}}"},
+
+    {"action": "fill", "selector": "xpath=//label[contains(normalize-space(.),'Describe') or contains(normalize-space(.),'describe')]/following::textarea[1]", "value": "I create product reviews and tutorials for health enthusiasts. I look forward to promoting BodyHealth products to my audience.", "optional": true},
+
+    {"action": "scroll_down", "pixels": 600},
+    {"action": "scroll_down", "pixels": 600},
+    {"action": "check", "selector": "input[type=checkbox]", "optional": true},
+    {"action": "solve_captcha", "optional": true},
+    {"action": "click", "selector": "button[type=submit], input[type=submit]"},
+    {"action": "wait", "ms": 5000},
+    {"action": "assert_success", "patterns": ["account created", "under review", "pending", "application", "submitted", "thank you", "check your email", "success", "username is"]}
+  ]
+}

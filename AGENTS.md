@@ -72,7 +72,7 @@ frontend/
 - Thêm cột / bảng:
   1. Sửa model trong [backend/app/models/](backend/app/models/).
   2. Restart BE (hoặc nếu cột mới trên bảng cũ → xoá `data/app.db` mất dữ liệu test, **hoặc** thêm logic `_ensure_column` trong [backend/app/core/db.py](backend/app/core/db.py) như các cột hiện tại).
-- Default admin `admin/1` được auto-seed bởi `seed_default_admin()` trong [backend/app/services/user_service.py](backend/app/services/user_service.py), gọi từ startup lifespan ([backend/app/main.py](backend/app/main.py)).
+- Default admin `admin/123456` được auto-seed bởi `seed_default_admin()` trong [backend/app/services/user_service.py](backend/app/services/user_service.py), gọi từ startup lifespan ([backend/app/main.py](backend/app/main.py)).
 
 ---
 

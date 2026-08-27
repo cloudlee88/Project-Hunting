@@ -116,7 +116,7 @@ Lưu log:
 npm run dev *>&1 | Tee-Object -FilePath logs\frontend.log -Append
 ```
 
-Mở trình duyệt: <http://localhost:3001> → đăng nhập **`admin` / `1`** (admin được tạo tự động lần đầu BE chạy).
+Mở trình duyệt: <http://localhost:3001> → đăng nhập **`admin` / `123456`** (admin được tạo tự động lần đầu BE chạy).
 
 ---
 
@@ -182,7 +182,7 @@ Get-Content frontend\logs\frontend.log -Wait -Tail 100
 1. **KHÔNG gửi `backend\.env`** (gitignored). Gửi key qua kênh riêng.
 2. Gửi kèm file này + `backend\.env.example`.
 3. Khách copy `.env.example` → `.env`, điền 2 key bắt buộc, chạy 2 cửa sổ PowerShell ở trên.
-4. Đăng nhập `admin` / `1` → test 1 program goaffpro.
+4. Đăng nhập `admin` / `123456` → test 1 program goaffpro.
 
 ---
 

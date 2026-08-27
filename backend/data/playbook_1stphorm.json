@@ -1,0 +1,45 @@
+{
+  "program_id": 975,
+  "name": "1st Phorm - Post Affiliate Pro (Typeform)",
+  "platform": "postaffiliatepro",
+  "category": "Health & Wellness",
+  "signup_url": "https://1stphorm.postaffiliatepro.com/",
+  "source": "manual",
+  "steps": [
+    {"action": "navigate", "url": "{{signup_url}}"},
+    {"action": "wait", "ms": 3000},
+
+    {"action": "click", "selector": "a[href*='apply'], a[href*='signup'], button:has-text('Apply'), a:has-text('Apply Now'), a:has-text('Join'), a:has-text('Sign Up')", "optional": true},
+    {"action": "wait", "ms": 2000},
+
+    {"action": "scroll_down", "pixels": 600},
+    {"action": "wait", "ms": 1000},
+
+    {"action": "fill", "selector": "iframe >> [data-qa='first-name'], iframe >> input[placeholder*='First'], iframe >> input[name*='first']", "value": "{{profile.first_name}}", "optional": true},
+    {"action": "fill", "selector": "iframe >> [data-qa='name'], iframe >> input[type='text']:first-of-type", "value": "{{profile.first_name}}", "optional": true},
+    {"action": "key", "key": "Enter"},
+    {"action": "wait", "ms": 1000},
+
+    {"action": "key", "key": "Escape", "optional": true},
+    {"action": "wait", "ms": 500},
+
+    {"action": "fill", "selector": "iframe >> [data-qa='last-name'], iframe >> input[placeholder*='Last'], iframe >> input[name*='last']", "value": "{{profile.last_name}}", "optional": true},
+    {"action": "key", "key": "Enter"},
+    {"action": "wait", "ms": 1000},
+
+    {"action": "fill", "selector": "iframe >> input[type='email'], iframe >> [data-qa='email']", "value": "{{profile.email}}", "optional": true},
+    {"action": "key", "key": "Enter"},
+    {"action": "wait", "ms": 1000},
+
+    {"action": "fill", "selector": "iframe >> input[type='tel'], iframe >> [data-qa='phone'], iframe >> input[placeholder*='phone' i]", "value": "{{profile.phone}}", "optional": true},
+    {"action": "key", "key": "Enter"},
+    {"action": "wait", "ms": 1000},
+
+    {"action": "fill", "selector": "iframe >> input[type='url'], iframe >> [data-qa='url'], iframe >> input[placeholder*='website' i], iframe >> input[placeholder*='url' i]", "value": "{{profile.website}}", "optional": true},
+    {"action": "key", "key": "Enter"},
+    {"action": "wait", "ms": 1000},
+
+    {"action": "wait", "ms": 5000},
+    {"action": "assert_success", "patterns": ["thank you", "application", "submitted", "under review", "schedule", "booking", "calendar", "appointment", "legionnaire", "hubspot", "success", "complete"]}
+  ]
+}

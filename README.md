@@ -90,7 +90,7 @@ mkdir -p logs
 npm run dev 2>&1 | tee -a logs/frontend.log
 ```
 
-Mở <http://localhost:3001> → **đăng nhập `admin` / `1`** (tài khoản admin được tạo tự động khi BE khởi động lần đầu).
+Mở <http://localhost:3001> → **đăng nhập `admin` / `123456`** (tài khoản admin được tạo tự động khi BE khởi động lần đầu).
 
 ---
 
@@ -143,7 +143,7 @@ tail -f frontend/logs/frontend.log
 1. **KHÔNG gửi `backend/.env`** (gitignored). Gửi key qua kênh riêng (1Password / mail bảo mật).
 2. Gửi kèm: `README.md` (Linux/Mac) + `README.windows.md` (Windows) + `backend/.env.example`.
 3. Khách copy `.env.example` → `.env`, điền 2 key bắt buộc, chạy 2 lệnh `uvicorn` + `npm run dev`.
-4. Đăng nhập `admin` / `1` → test 1 program goaffpro để verify.
+4. Đăng nhập `admin` / `123456` → test 1 program goaffpro để verify.
 
 ---
 
